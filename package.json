@@ -1,0 +1,22 @@
+{
+    "private": true,
+    "name": "@planning.nl/vugel-docs",
+    "description": "The documentation of the vugel project",
+    "version": "1.0.0",
+    "author": "Planning.nl, Robbin Baauw",
+    "bugs": {
+        "url": "https://github.com/Planning-nl/vugel-docs/issues",
+        "email": "support@planning.nl"
+    },
+    "devDependencies": {
+        "vuepress": "^1.4.0"
+    },
+    "scripts": {
+        "dev": "vuepress dev docs",
+        "build": "vuepress build docs"
+    },
+    "homepage": "https://github.com/Planning-nl/vugel-docs#readme",
+    "keywords": [],
+    "license": "apache",
+    "repository": "github:Planning-nl/vugel-docs"
+}
