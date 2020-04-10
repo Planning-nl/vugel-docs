@@ -124,8 +124,10 @@ A container that has a solid background or linear gradient. The color can be spe
 Gradients can be specified by setting the different corner point colors using `colorTop`, `colorRight`, `colorBottom`,
 `colorLeft`, `colorUl` (upper-left), `colorUr` (upper-right), `colorBr` (bottom-right), `colorBl` (bottom-left). 
 
-> These color properties are also available for all other renderable elements, such as `image` and `text` elements. In
-> that case it provides texture tinting.
+::: tip
+These color properties are also available for all other renderable elements, such as `image` and `text` elements. In
+that case it provides texture tinting.
+:::
 
 ### `text`
 A simple piece of (non-wrapping) text. Several styling-related properties can be specified.
@@ -133,7 +135,9 @@ A simple piece of (non-wrapping) text. Several styling-related properties can be
 ### `paragraph`
 Breaks down the text contents by word and wraps it to the current width of the paragraph. 
 
-> The paragraph element currently only support a single piece of text with the same styles. 
+::: tip Note
+The paragraph element currently only support a single piece of text with the same styles. 
+:::
 
 ### `special-retangle`
 While rectangle is a really lightweight element that is ultra fast to render (because it does not need a texture), it
@@ -175,8 +179,10 @@ Renders an svg file (set by the `src` property) for the available width and heig
 ### Grayscale
 The contents of this element are rendered in grayscale. 
 
-> Notice that the contents are pre-rendered to an 'intermediate' texture with the dimensions of this element. This means 
-> that if the element has no width or height, nothing will be visible!
+::: tip Note
+Notice that the contents are pre-rendered to an 'intermediate' texture with the dimensions of this element. This means 
+that if the element has no width or height, nothing will be visible!
+:::
 
 ### Rounded
 The contents of this element are rendered in a rounded shape. The corner radius can be specified the `radius` property. 
