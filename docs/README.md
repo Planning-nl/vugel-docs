@@ -1,6 +1,6 @@
 ---
 sidebar: auto
-sidebarDepth: 2
+sidebarDepth: 3
 ---
 
 # Vugel
@@ -11,7 +11,7 @@ Vugel is based on the [tree2d](https://github.com/Planning-nl/tree2d) library, w
 Tree2d itself depends on [flexbox.js](https://github.com/Planning-nl/flexbox.js) library, which allows you to use flexbox in WebGL.
 
 ::: warning
-Vugel is still in alpha, it is not tested as much as it should be. Use at own risk!
+Vugel and these docs are still WIP. Use at own risk!
 :::
 
 ## Getting started
@@ -81,5 +81,55 @@ export default {
 };
 </script>
 ```
+
+## Nodes
+Vugel exposes a few "native" tags, for example `<rectangle/>`. Some of these can be compared to their DOM counterparts.
+
+All the attributes passed to these elements will be passed to tree2d. 
+
+### Root
+
+### Container
+> Comparable to `div`
+
+### Image
+> Comparable to `image`
+
+### Rectangle
+
+### Text
+
+### Paragraph
+> Comparable to `p`
+
+### Special rectangle
+
+### Drawing
+
+### Texture
+
+### SVG
+> Comparable to `svg`
+
+### Grayscale
+
+### Rounded
+
+### Shader
+
+### Box-blur
+
+## Events
+Events emitted in Vugel are pretty close to their corresponding DOM events, with some differences.
+
+Every event has a different type than the original event. It was chosen to do it this way as to be able to ensure that the expected behavior is actually followed.
+
+### Mouse events
+All mouse events supported by DOM are supported by Vugel, and are translated into their own structure.
+
+Every mouse event will include the following fields:
+- `canvasOffsetX` / `canvasOffsetY`: the offset of the mouse w.r.t. the canvas
+- `elementOffsetX` / `elementOffsetY`: the offset of the mouse w.r.t. the current element
+- `currentElement`: the currently selected element
 
 ## Examples
