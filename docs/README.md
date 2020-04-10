@@ -196,7 +196,10 @@ TODO: scaling, rotation, pivot.
 ## Rendering
 TODO: clipping, renderToTexture, z-index, texture clipping / resize modes
 
-## Events
+## Lifecycle
+TODO: lifecycle events (onSetup etc)
+
+## UI Events
 Events emitted in Vugel are pretty close to their corresponding DOM events, with some differences.
 
 Every event has a different type than the original event. It was chosen to do it this way as to be able to ensure that 
@@ -244,6 +247,3 @@ Supported events:
 - `keypress`
 - `keydown`
 - `keyup`
-
-## Examples
-TODO
