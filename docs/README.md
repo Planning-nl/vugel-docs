@@ -74,8 +74,10 @@ The available vugel settings are used for creating a new tree2d stage. They defi
 canvas (in hexadecimal argb notation). See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
 for a full list of options.
 
-> You should only specify your root component(s) in the `<vugel>` tag, not vugel tags. Vugel tags should only be placed
-> in pure vugel components, because the vue3 compiler doesn't support mixing html and vugel tags within the same template.
+::: warning
+You should only specify your root component(s) in the `<vugel>` tag, not vugel tags. Vugel tags should only be placed
+in pure Vugel components, because the Vue3 compiler doesn't support mixing HTML and Vugel tags within the same template.
+:::
 
 #### Vugel components
 
@@ -108,7 +110,7 @@ Vugel exposes a few "native" tags, for example `<rectangle/>`. Some of these can
 
 All the attributes passed to these elements will be passed to tree2d. 
 
-### Container
+### `container`
 Comparable to a `div` element in HTML.
 
 May contain other elements.  
@@ -173,10 +175,10 @@ The `onDraw` function will be invoked automatically when the element dimensions 
 This allows using a [tree2d native texture](https://github.com/Planning-nl/tree2d/tree/master/src/textures) directly 
 within an element.
 
-### SVG
+### `svg`
 Renders an svg file (set by the `src` property) for the available width and height.
 
-### Grayscale
+### `grayscale`
 The contents of this element are rendered in grayscale. 
 
 ::: tip Note
@@ -184,13 +186,13 @@ Notice that the contents are pre-rendered to an 'intermediate' texture with the 
 that if the element has no width or height, nothing will be visible!
 :::
 
-### Rounded
+### `rounded`
 The contents of this element are rendered in a rounded shape. The corner radius can be specified the `radius` property. 
 
-### Shader
+### `shader`
 The contents of this element are rendered using a [tree2d native shader](https://github.com/Planning-nl/tree2d/tree/master/src/renderer/webgl/shaders).
 
-### Box-blur
+### `box-blur`
 The contents of this element are rendered box-blurred. Box blur is a very slight but high-performance blur effect.
 
 ## Layout
