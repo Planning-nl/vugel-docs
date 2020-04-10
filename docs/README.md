@@ -188,7 +188,13 @@ The contents of this element are rendered using a [tree2d native shader](https:/
 The contents of this element are rendered box-blurred. Box blur is a very slight but high-performance blur effect.
 
 ## Layout
-TODO: flexbox.
+TODO: positioning, mounting, w, h, flexbox.
+
+## Transforms
+TODO: scaling, rotation, pivot.
+
+## Rendering
+TODO: clipping, renderToTexture, z-index, texture clipping / resize modes
 
 ## Events
 Events emitted in Vugel are pretty close to their corresponding DOM events, with some differences.
