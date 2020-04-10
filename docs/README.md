@@ -187,27 +187,57 @@ The contents of this element are rendered using a [tree2d native shader](https:/
 ### Box-blur
 The contents of this element are rendered box-blurred. Box blur is a very slight but high-performance blur effect.
 
+## Layout
+TODO: flexbox.
+
 ## Events
 Events emitted in Vugel are pretty close to their corresponding DOM events, with some differences.
 
-Every event has a different type than the original event. It was chosen to do it this way as to be able to ensure that the expected behavior is actually followed.
+Every event has a different type than the original event. It was chosen to do it this way as to be able to ensure that 
+the expected behavior is actually followed.
 
+A `VugelEvent` has the following properties:
+
+- `cancelBubble: boolean`: Set to `true` to cancel event bubbeling.
+- `currentTarget: Node | null`: 'This' node (while bubbeling).
+- `target: Node | null`: The event target node (while bubbeling).
+- `type: string`: The event name
+- `originalEvent: Event`: The original DOM Event is available using the `originalEvent` property.
+ 
 ### Mouse events
 All mouse events supported by DOM are supported by Vugel, and are translated into their own structure.
 
-Every mouse event will include the following fields:
+Supported mouse events:
+- `mousemove`
+- `mouseover`
+- `mouseout`
+- `mouseenter`
+- `mouseleave`
+
+Every mouse event will additionally include the following fields:
 - `canvasOffsetX` / `canvasOffsetY`: the offset of the mouse w.r.t. the canvas
 - `elementOffsetX` / `elementOffsetY`: the offset of the mouse w.r.t. the current element
-- `currentElement`: the currently selected element
+- `currentElement: { offsetX: number; offsetY: number; element: Element; }`: The tree2d target and offset.
 
 ### Touch events
-Touch events are not supported in the regular sense. Instead, we currently only use the first touch and translate it to the mouse corresponding event. 
+Touch events are not supported in the regular sense. Instead, we currently only use the first touch and translate it to 
+the mouse corresponding event. 
 
 ### Focus events
-TODO
+Supported events:
+- `focusin`
+- `focusout`
+- `focus`
+- `blur`
+
+Additional event fields:
+- `relatedTarget: Node | null`: The previous (in case of `focusin`, `focus` events) or new (`focusout`, `blur`) focused node.
 
 ### Keyboard events
-TODO
+Supported events:
+- `keypress`
+- `keydown`
+- `keyup`
 
 ## Examples
 TODO
