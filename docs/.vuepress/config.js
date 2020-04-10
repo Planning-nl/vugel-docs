@@ -3,6 +3,9 @@ module.exports = {
     description: 'WebGL for Vue3',
     serviceWorker: true,
     themeConfig: {
-        displayAllHeaders: true
+        displayAllHeaders: true,
+        repo: "Planning-nl/vugel",
+        docsRepo: "Planning-nl/vugel-docs",
+        editLinks: true,
     }
 }

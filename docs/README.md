@@ -50,7 +50,7 @@ Then you need to add the following snippet to the `module.rules` array in your `
 },
 ```
 
-### Component
+### Application
 To create a canvas with Vugel, you simply use the `vugel` component, as such:
 ```vue
 <template>
@@ -82,42 +82,61 @@ export default {
 </script>
 ```
 
+## Component
+The most important part of Vugel is the `Vugel` component. This has the following props:
+- TODO
+
 ## Nodes
 Vugel exposes a few "native" tags, for example `<rectangle/>`. Some of these can be compared to their DOM counterparts.
 
 All the attributes passed to these elements will be passed to tree2d. 
 
-### Root
-
 ### Container
 > Comparable to `div`
+
+TODO
 
 ### Image
 > Comparable to `image`
 
+TODO
+
 ### Rectangle
+TODO
 
 ### Text
+TODO
 
 ### Paragraph
 > Comparable to `p`
 
+TODO
+
 ### Special rectangle
+TODO
 
 ### Drawing
+TODO
 
 ### Texture
+TODO
 
 ### SVG
 > Comparable to `svg`
 
+TODO
+
 ### Grayscale
+TODO
 
 ### Rounded
+TODO
 
 ### Shader
+TODO
 
 ### Box-blur
+TODO
 
 ## Events
 Events emitted in Vugel are pretty close to their corresponding DOM events, with some differences.
@@ -132,4 +151,14 @@ Every mouse event will include the following fields:
 - `elementOffsetX` / `elementOffsetY`: the offset of the mouse w.r.t. the current element
 - `currentElement`: the currently selected element
 
+### Touch events
+Touch events are not supported in the regular sense. Instead, we currently only use the first touch and translate it to the mouse corresponding event. 
+
+### Focus events
+TODO
+
+### Keyboard events
+TODO
+
 ## Examples
+TODO
