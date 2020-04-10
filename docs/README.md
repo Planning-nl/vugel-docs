@@ -50,7 +50,7 @@ Then you need to add the following snippet to the `module.rules` array in your `
 },
 ```
 
-### Usage
+### Application
 To create a canvas with Vugel, you simply use the `vugel` component, as such:
 ```vue
 <template>
@@ -200,4 +200,14 @@ Every mouse event will include the following fields:
 - `elementOffsetX` / `elementOffsetY`: the offset of the mouse w.r.t. the current element
 - `currentElement`: the currently selected element
 
+### Touch events
+Touch events are not supported in the regular sense. Instead, we currently only use the first touch and translate it to the mouse corresponding event. 
+
+### Focus events
+TODO
+
+### Keyboard events
+TODO
+
 ## Examples
+TODO
