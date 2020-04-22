@@ -25,7 +25,7 @@ Make sure the `vue` package is installed!
 Currently, using Vugel requires using our custom loader and requires some custom Webpack configuration. 
 This is to get SFC's to work.
 
-A full example repository can be found [here](https://github.com/Planning-nl/vugel-example).
+A few examples can be found [here](https://vugel-example.planning.nl/).
 
 ### Webpack config
 In order to use Vugel, you need a custom `vue-loader`, until [this PR](https://github.com/vuejs/vue-loader/pull/1645) gets merged. 
