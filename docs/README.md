@@ -4,11 +4,11 @@ sidebarDepth: 3
 ---
 
 # Vugel
-Vugel is a WebGL-powered 2d renderer for Vue3. It provides an alternative to DOM rendering, with less features, but better
- performance in terms of of element creation and rendering.
+Vugel is a WebGL-powered 2d renderer for Vue 3. It provides an alternative to DOM rendering, with less features, but better
+ performance in terms of element creation and rendering.
 
-Vugel is designed to be part of a 'normal' vue3 DOM-based application. This means that you can
-share the same (vuex) state and properties. 
+Vugel is designed to be part of a 'normal' Vue 3 DOM-based application. This means that you can
+share the same state (vuex) and properties. 
  
 Typical use cases for Vugel include games and charts, or other many-elements cases where runtime performance is essential.
 
