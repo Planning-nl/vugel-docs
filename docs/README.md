@@ -15,10 +15,6 @@ Typical use cases for Vugel include games and charts, or other many-elements cas
 Vugel is based on the [tree2d](https://github.com/Planning-nl/tree2d) library, which is a high-performance WebGL UI library.
 Tree2d itself depends on [flexbox.js](https://github.com/Planning-nl/flexbox.js) library, which allows you to use flexbox in WebGL.
 
-::: warning
-Vugel and these docs are still WIP. Use at own risk!
-:::
-
 ## Getting started
 To get started, first install the Vugel package from NPM:
 ``` bash
@@ -64,7 +60,7 @@ Vugel itself provides a component which spawns a HTMLCanvasElement. To create a 
 the `vugel` component, as such:
 ```vue
 <template>
-    <vugel :settings="{clearColor: 0xff000000}" style="width: 500px; height: 500px">
+    <vugel :settings="{clearColor: 'black'}" style="width: 500px; height: 500px">
         <my-vugel-root-component example-prop="hello world" />
     </vugel>
 </template>
@@ -80,17 +76,18 @@ export default {
 </script>
 ```
 
-Notice that in the `<vugel>` tag you must always use a single vugel root component (also without v-if).
+::: warning
+You should only specify your root component(s) (without `v-if`) in the `<vugel>` tag, not Vugel tags. Vugel tags should only be placed
+in pure Vugel components, because the Vue3 compiler currently doesn't support mixing HTML and Vugel tags within the same template.
+:::
 
-> The reason for this limitation is that Vugel requires its own compiler, and in this scope the DOM compiler is still active.
-
-The available vugel `:settings` are used for creating a new tree2d stage. They define, for example, the background of the 
-canvas (in hexadecimal argb notation). See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
+The available Vugel `:settings` are used for creating a new tree2d stage. They define, for example, the background of the 
+canvas. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
 for a full list of options.
 
-::: warning
-You should only specify your root component(s) in the `<vugel>` tag, not vugel tags. Vugel tags should only be placed
-in pure Vugel components, because the Vue3 compiler doesn't support mixing HTML and Vugel tags within the same template.
+::: tip Note
+The supported color formats are [CSS colors](https://github.com/Planning-nl/tree2d/blob/master/src/tree/ColorUtils.ts#L185), RGB(A), Hex and hexadecimal ARGB.
+Using hexadecimal ARGB will be the fastest, as it won't require a conversion.
 :::
 
 #### Vugel components
@@ -101,7 +98,7 @@ To use custom SFC components which are fully rendered using Vugel, it is require
 ```vue
 <template compiler="vugel">
     <container>
-        <rectangle :x="10" :y="10" :w="width" :h="100" :color="0xffff0000" />
+        <rectangle :x="10" :y="10" :w="width" :h="100" color="#ff0000" />
         <text :x="10" :y="140" :font-size="10" :font-weight="600">{{ exampleProp }}</text>
     </container>
 </template>
