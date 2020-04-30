@@ -44,7 +44,7 @@ Then you need to add the following snippet to the `module.rules` array in your `
         loader: "vue-loader",
         options: {
             templateCompilers: {
-                vugel: { compiler: require("vugel"), compilerOptions: {} },
+                vugel: [ require("vugel"), {} ],
             },
         },
     },
