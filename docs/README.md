@@ -122,6 +122,11 @@ export default {
 
 ## Nodes
 Vugel provides a set of native tags and attributes comparable, but different, to HTML DOM.
+To view the available properties, please click on the tag name and view the source code of the class (and parent 
+classes). *Use the force, read the source!*
+
+Many of these tags are covered in the the [vugel-examples repository](https://vugel-example.planning.nl/).
+
 
 ### [`container`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/Container.ts)
 Comparable to a `div` html element.
@@ -218,7 +223,132 @@ An intermediate texture is used, so you should make sure that the element has wi
 The contents of this element are rendered box-blurred. Box blur is a very slight but high-performance blur effect.
 
 ## Layout
-TODO: positioning, mounting, w, h, flexbox.
+Vugel offers a layout engine that uses relative positioning. Additionally, it contains a flexbox layout engine.
+
+### Positioning
+The `x` and `y` properties can be used to position the node relative to the parent node.
+ 
+> A feature like `position:fixed` is not supported. We advice to use the vue **Teleport** feature.
+
+Width and height can be set using `w` and `h`. When not specified (or set to `0`, the width and/or height of the current 
+texture (picture, text, drawing, styled-rectangle, etc) are used instead.
+
+The `mount-x` and `mount-y` properties are used to specify how the node should be aligned on the specified `x` and `y`
+coordinates. When set to `0`, `(x, y)` defines the position of the top-left corner of the node. When set to `1` it 
+defines the position of the bottom-right corner, and using a value of `0.5` for mount causes the node to be centered on
+the `(x, y)` coordinates. The `mount` property is especially handy to align nodes for which the dimensions are not yet
+known beforehand - or are dynamic.
+
+### Relative functions
+Like CSS has the `calc(..)` expression, Vugel offers something similar known as *relative functions*. Using
+the properties `func-x`, `func-y`, `func-w` and `func-h` you can calculate the coordinates and dimensions dynamically.
+
+```html
+<rectangle func-x="0.5*w" func-y="0.5*h" func-w="0.25*w" func-h="Math.sqrt(0.25*w+0.5*h)+10" />
+```  
+
+All relative functions receive arguments `w` and `h`, which refer to the parent's (calculated) width and height. 
+
+> That strings are used for the functions. You could also use your own function (like `<rectangle :func-x="myFunc" ..`) 
+> but the string function are cached and reused, allowing the JIT to optimize them better.
+
+### Layout-related properties
+
+| Property | type | CSS equivalent | Notes |
+| -------- | ---- | -------------- |-----|
+| `x` | `number` |  | Offset |
+| `y` | `number` |  |  |
+| `w` | `number` |  | Size; when 0 then texture's dimensions are inherited |
+| `h` | `number` |  |  |
+| `func-x` | `(w: number, h: number)` |  | When set, overrules the `x` property and (re)calculates it from the parent dimensions |
+| `func-y` | `(w: number, h: number)` |  | |
+| `func-w` | `(w: number, h: number)` |  |  |
+| `func-h` | `(w: number, h: number)` |  |  |
+| `mount` | `number` |  | Number between 0 and 1, sets both mount-x and mount-y |
+| `mount-x` | `number` |  | Number between 0 and 1 |
+| `mount-y` | `number` |  | Number between 0 and 1 |
+
+### Layout-related methods
+
+These Node methods can be used to obtain information on the Node's dynamic layout. 
+
+| Method | Description |
+| ------ | ----------- |
+| `getLayoutX() : number` | post-layout `x` position |
+| `getLayoutY() : number` | post-layout `y` position |
+| `getLayoutW() : number` | post-layout width |
+| `getLayoutH() : number` | post-layout height |
+
+> The getLayout methods will return the value that was calculated during the last update cycle (what is currently 'on 
+> screen'). Notice that you can manually force an update by invoking `node.stage.root.core.update()`;
+
+### Layout-related events
+
+| Event | arg | Description |
+| ------ | --- | ----------- |
+| `onResize` | `{ node: Node; stage: Stage; w: number; h: number }` | Called whenever the node changes dimensions dynamically |
+
+## Flexbox
+
+Flexbox layouting is also supported. It's almost identical to the CSS Flexbox layout engine, but uses different 
+properties.
+
+> Notice that nodes with the `visibile` property set to `false` are ignored in the layout. Nodes with the `alpha` property set to 0 still take up space.
+
+> When flex layout is active, the `x` and `y` properties will be added to the positions calculated by the flexbox layout engine.
+
+> When the `w` and/or `h` is set to the number `0`, it will **fit to the contents** in those directions.
+
+### Flex container properties
+
+These properties define the behavior of a flex container.
+
+| Property | type | CSS equivalent | Notes |
+| -------- | ---- | -------------- |-----|
+| `flex` | `true,false` | | When true, this node behaves as a flex container  |
+| `flex-direction`| `'row','row-reverse','column','column-reverse'` | `flex-direction` | |
+| `flex-wrap` | `true,false` | `flex-wrap` | `wrap-reverse` is not supported |
+| `flex-align-items` | `'flex-start','flex-end','center','stretch'` | align-items | `baseline` not supported |
+| `flex-align-content` | `'flex-start','flex-end','center','space-between','space-around','space-evenly','stretch'` | align-content | |
+| `flex-justify-content` | `'flex-start','flex-end','center','space-between','space-around','space-evenly'` | justify-content | |
+| `flex-padding` | `number` | `padding` | in pixels |
+| `flex-padding-top` | `number` | `padding-top` | |
+| `flex-padding-left` | `number` | `padding-left` | |
+| `flex-padding-bottom` | `number` | `padding-bottom` | |
+| `flex-padding-right` | `number` | `padding-right` | |
+
+### Flex item properties
+
+These properties define the behavior of the child items of a flex container.
+
+| Property | type | CSS equivalent | Notes |
+| -------- | ---- | -------------- |----|
+| `flex-item` | `true,false` | | When false, this item will not affect the flex layout and will be positioned relatively |
+| `flex-grow`| `number` | `flex-grow` | |
+| `flex-shrink`| `number` | `flex-shrink` | The default value is 0 (in CSS it defaults to 1) |
+| `flex-align-self` | `'flex-start','flex-end','center','stretch'` | `align-self` | |
+|  |  | `order` | Not supported |
+|  |  | `flex-basis` | Not supported (behavior is always as `flex-basis:auto`) |
+| `min-width` | `number` | `min-width` | in pixels |
+| `max-width` | `number` | `max-width` | in pixels |
+| `min-height` | `number` | `min-height` | in pixels |
+| `max-height` | `number` | `max-height` | in pixels |
+| `margin` | `number` | `margin` | in pixels |
+| `margin-top` | `number` | `margin-top` | |
+| `margin-left` | `number` | `margin-left` | |
+| `margin-bottom` | `number` | `margin-bottom` | |
+| `margin-right` | `number` | `margin-right` | |
+
+### Layout skipping
+The `skip-in-layout` property can be used to **skip** the node while layouting. This can be handy in combination with vue 
+component slots. By setting `skipInLayout` to true on the nodes between the component root and the slot itself, you 
+could layout the slot children as if they were immediate children of the component.
+
+In this mode, flexbox behaves as if this skipped node was replaced by it's own children. This means that if the node 
+itself was a flex item of a flex container, it's children will now become flex items of that flex container. 
+
+It also affects relative layout function arguments (`w` or `h`). If the parent has `skip-in-layout` set to true, the 
+grandparent's width and height will be used.
 
 ## Transforms
 TODO: scaling, rotation, pivot.
