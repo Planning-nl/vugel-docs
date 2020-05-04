@@ -15,13 +15,15 @@ Typical use cases for Vugel include games and charts, or other many-elements cas
 Vugel is based on the [tree2d](https://github.com/Planning-nl/tree2d) library, which is a high-performance WebGL UI library.
 Tree2d itself depends on [flexbox.js](https://github.com/Planning-nl/flexbox.js) library, which allows you to use flexbox in WebGL.
 
+Vugel does not (directly) allow WebGL based 3d graphics. However, it does support custom shaders.
+
 ## Getting started
 To get started, first install the Vugel package from NPM:
 ``` bash
 yarn add vugel 
 # OR npm install vugel
 ```
-Make sure the `vue` package is installed!
+Vugel has a peer dependency on vue3. Make sure that the `vue` (version 3) package is installed!
 
 A repository containing several examples can be found on [https://vugel-example.planning.nl](https://vugel-example.planning.nl).
 
@@ -32,8 +34,8 @@ Have a look at [this codepen](https://codepen.io/basvanmeurs/pen/vYNGRGP?editors
 In order to use Vugel with SFC components, you need a custom `vue-loader`, until [this PR](https://github.com/vuejs/vue-loader/pull/1645) gets merged. 
 This can be installed as such:
 ``` bash
-yarn add git+ssh://git@github.com:Planning-nl/vue-loader.git#feat/multiple-compilers-build 
-# OR npm install git+ssh://git@github.com:Planning-nl/vue-loader.git#feat/multiple-compilers-build
+yarn add git+https://github.com/Planning-nl/vue-loader.git#feat/multiple-compilers-build 
+# OR npm install git+https://github.com/Planning-nl/vue-loader.git#feat/multiple-compilers-build
 ```
 
 Then you need to add the following snippet to the `module.rules` array in your `webpack.config.js` file:
@@ -54,9 +56,10 @@ Then you need to add the following snippet to the `module.rules` array in your `
 ### Application
 
 Working with Vugel is just like you'd normally do with HTML elements in Vue3. In general you can use all Vue3 features. 
+
 The available tags, events and attributes are different. 
 
-Vugel itself provides a component which spawns a HTMLCanvasElement. To create a canvas with Vugel, you simply use 
+Vugel itself provides a component which spawns a `HTMLCanvasElement`. To create a canvas with Vugel, you simply use 
 the `vugel` component, as such:
 ```vue
 <template>
@@ -77,12 +80,12 @@ export default {
 ```
 
 ::: warning
-You should only specify your root component(s) (without `v-if`) in the `<vugel>` tag, not Vugel tags. Vugel tags should only be placed
+You should only specify your root component(s) (without using `v-if`) in the `<vugel>` tag, not Vugel tags. Vugel tags should only be placed
 in pure Vugel components, because the Vue3 compiler currently doesn't support mixing HTML and Vugel tags within the same template.
 :::
 
 The available Vugel `:settings` are used for creating a new tree2d stage. They define, for example, the background of the 
-canvas. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
+canvas and memory settings. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
 for a full list of options.
 
 #### Vugel components
@@ -122,22 +125,21 @@ classes). *Use the force, read the source!*
 
 Many of these tags are covered in the the [vugel-examples repository](https://vugel-example.planning.nl/).
 
-
 ### [`container`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/Container.ts)
-Comparable to a `div` html element.
+Contains other nodes. Comparable to a `div` html element.
 
 ### [`picture`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Picture.ts)
 Comparable to the `img` html element.
 
-Render an image specified by the `src` property. 
+Loads and renders an image specified by the `src` property. 
 
 > Make sure that your pictures are local or allow CORS. This is required for WebGL to be able to use them. 
 
 ### [`rectangle`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Rectangle.ts)
 A container that has a solid background or linear gradient. The color can be specified using the properties `color`.
 
-Gradients can be specified by setting the different corner point colors using `colorTop`, `colorRight`, `colorBottom`,
-`colorLeft`, `colorUl` (upper-left), `colorUr` (upper-right), `colorBr` (bottom-right), `colorBl` (bottom-left). 
+Gradients can be specified by setting the different corner point colors using `color-top`, `color-right`, `color-bottom`,
+`color-left` etc.  
 
 ::: tip
 These color properties are also available for all other renderable elements, such as `image` and `text` elements. In
@@ -151,7 +153,7 @@ A simple piece of (non-wrapping) text. Several styling-related properties [can b
 Breaks down the text contents by word and wraps it to the current width of the paragraph. 
 
 ::: tip Note
-The paragraph element currently only support a single piece of text with the same styles. 
+The paragraph element currently only supports a single piece of text with the same styles. 
 :::
 
 ### [`styled-retangle`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/StyledRectangle.ts)
@@ -160,8 +162,8 @@ The `styled-rectangle` supports rounded edges, stroke and shadows. It needs to b
 to the GPU. This causes a hefty performance penalty (but only upon the first frame that it is shown). 
 
 ### [`drawing`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Drawing.ts)
-Allows you to use a canvas2d rendering context to draw a custom texture. The `onDraw` property must be set with your
-custom drawing function in the form:
+Allows you to use a canvas2d rendering context to draw a custom texture. The `draw` event must be set with your
+custom drawing function with the following type:
 
 ```typescript
 export type DrawingFunction = (options: DrawingFunctionOptions) => DrawingResult | Promise<DrawingResult>;
@@ -184,15 +186,15 @@ export type DrawingResult = {
 };
 ```
 
-The `onDraw` function will be invoked automatically when the element dimensions change.
+The `draw` event will be invoked automatically when the element dimensions change.
 
-> You can trigger a manual redraw by invoking the update() method on a drawing tag. You can use a `ref` to obtain a 
+> You can trigger a manual redraw by invoking the `update()` method on a drawing tag. You can use a `ref` to obtain a 
 > reference to the element first. 
 
 ### [`texture`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Texture.ts)
 There are advanced use cases where the `drawing` tag is not flexible enough. For example if you'd want to upload an 
-UInt8Array as a WebGL texture source. The `texture` tag allows you to use a 
-[tree2d native texture](https://github.com/Planning-nl/tree2d/tree/master/src/textures) directly. 
+UInt8Array as a WebGL texture source. Or when you want to reuse the same texture object for performance reasons. 
+The `texture` tag allows you to use a [tree2d native texture](https://github.com/Planning-nl/tree2d/tree/master/src/textures) directly. 
 
 ### [`svg`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Svg.ts)
 Renders an svg file (set by the `src` property) for the available width and height.
@@ -202,7 +204,7 @@ The contents of this element are rendered in grayscale.
 
 ::: tip Note
 Notice that the contents are pre-rendered to an 'intermediate' texture with the dimensions of this element. This means 
-that if the `grayscale` element receives no width or height, nothing will be visible!
+that if the node has no width or height, nothing will be visible!
 :::
 
 ### [`rounded`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/effects/Rounded.ts)
@@ -220,15 +222,16 @@ The contents of this element are rendered box-blurred. Box blur is a very slight
 
 ### [`direct-container`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/DirectContainer.ts)
 In very specific cases you may wish to work around Vue templates/reactivity. Vue is great in almost all use cases, but 
-direct mutations can be faster and give you more fine-grained control.
+direct mutations can be faster and offers more fine-grained control.
 
 The direct container, in contrast to a normal container, allows you to add, remove and iterate over children directly
 via several child-related methods. 
 
-> In a vue template, the direct-container should not contain children.
+> In a vue template, the `direct-container` tag should not contain children.
 
 ## Layout
-Vugel offers a layout engine that uses relative positioning. Additionally, it contains a flexbox layout engine.
+Vugel offers basic layouting that uses relative positioning. Additionally, it contains a flexbox layout engine which
+covers more advanced use cases.
 
 ### Positioning
 The `x` and `y` properties can be used to position the node relative to the parent node.
@@ -254,8 +257,9 @@ the properties `func-x`, `func-y`, `func-w` and `func-h` you can calculate the c
 
 All relative functions receive arguments `w` and `h`, which refer to the parent's (calculated) width and height. 
 
-> That strings are used for the functions. You could also use your own function (like `<rectangle :func-x="myFunc" ..`) 
-> but the string function are cached and reused, allowing the JIT to optimize them better.
+> You can either use a string to provide the function body, or refer to an actual function (like `<rectangle :func-x="myFunc" ..`). 
+> String functions are usually more convenient. On top of that they are cached and reused, allowing them to be better 
+> optimized by the javascript engine.
 
 ### Layout-related properties
 
@@ -269,7 +273,7 @@ All relative functions receive arguments `w` and `h`, which refer to the parent'
 | `func-y` | `(w: number, h: number)` |  | |
 | `func-w` | `(w: number, h: number)` |  |  |
 | `func-h` | `(w: number, h: number)` |  |  |
-| `mount` | `number` |  | Number between 0 and 1, sets both mount-x and mount-y |
+| `mount` | `number` |  | Number between 0 and 1, sets both `mount-x` and `mount-y` |
 | `mount-x` | `number` |  | Number between 0 and 1 |
 | `mount-y` | `number` |  | Number between 0 and 1 |
 
@@ -285,24 +289,18 @@ These Node methods can be used to obtain information on the Node's dynamic layou
 | `getLayoutH() : number` | post-layout height |
 
 > The getLayout methods will return the value that was calculated during the last update cycle (what is currently 'on 
-> screen'). Notice that you can manually force an update by invoking `node.stage.root.core.update()`;
+> screen'). Notice that you could manually force an update by invoking `node.stage.root.core.update()`;
 
 ### Layout-related events
 
 | Event | arg | Description |
 | ------ | --- | ----------- |
-| `resize` | `{ node: Node; stage: Stage; w: number; h: number }` | Called whenever the node changes dimensions dynamically |
+| `resize` | `{ node: Node; stage: Stage; w: number; h: number }` | Called whenever the node changes dimensions |
 
 ## Flexbox
 
 Flexbox layouting is also supported. It's almost identical to the CSS Flexbox layout engine, but uses different 
 properties.
-
-> Notice that nodes with the `visibile` property set to `false` are ignored in the layout. Nodes with the `alpha` property set to 0 still take up space.
-
-> When flex layout is active, the `x` and `y` properties will be added to the positions calculated by the flexbox layout engine.
-
-> When the `w` and/or `h` is set to the number `0`, it will **fit to the contents** in those directions.
 
 ### Flex container properties
 
@@ -321,6 +319,10 @@ These properties define the behavior of a flex container.
 | `flex-padding-left` | `number` | `padding-left` | |
 | `flex-padding-bottom` | `number` | `padding-bottom` | |
 | `flex-padding-right` | `number` | `padding-right` | |
+
+> When flex layout is active, the `x` and `y` properties will be added to the positions calculated by the flexbox layout engine.
+
+>> When the `w` and/or `h` is set to the number `0`, it will **fit to the contents** in those directions.
 
 ### Flex item properties
 
@@ -344,10 +346,13 @@ These properties define the behavior of the child items of a flex container.
 | `margin-bottom` | `number` | `margin-bottom` | |
 | `margin-right` | `number` | `margin-right` | |
 
+> Notice that nodes with the `visibile` property set to `false` are ignored in the layout. In contrast, nodes that have 
+>`visibile` on `true`, but the `alpha` property set to `0` still take up space.
+
 ### Layout skipping
-The `skip-in-layout` property can be used to **skip** the node while layouting. This can be handy in combination with vue 
-component slots. By setting `skipInLayout` to true on the nodes between the component root and the slot itself, you 
-could layout the slot children as if they were immediate children of the component.
+The `skip-in-layout` property can be used to **skip** the node while layouting. It's pretty advanced and usually you
+won't need it. It can be handy in combination with vue component slots. By setting `skip-in-layout` to true on the nodes 
+between the component root and the slot itself, you could layout the slot children as if they were immediate children of the component.
 
 In this mode, flexbox behaves as if this skipped node was replaced by it's own children. This means that if the node 
 itself was a flex item of a flex container, it's children will now become flex items of that flex container. 
@@ -361,13 +366,13 @@ All Vugel nodes support a couple of linear transformations, available using a co
 
 | Property | Type | Default | Notes |
 | -------- | ---- | ------- | ------ |
-| `scale` | number | 1.0 | Horizontal and vertical scaling |
-| `scale-x` | number | 1.0 | Horizontal scaling |
-| `scale-y` | number | 1.0 | Vertical scaling |
-| `rotation` | number | 0.0 | Rotation (radians) |
-| `pivot` | number | 0.5 | Horizontal and vertical pivot position |
-| `pivot-x` | number | 0.5 | Horizontal pivot position (0 = left, 0.5 = center, 1 = right) |
-| `pivot-y` | number | 0.5 | Vertical pivot position (0 = top, 0.5 = center, 1 = bottom) |
+| `scale` | `number` | `1.0` | Horizontal and vertical scaling |
+| `scale-x` | `number` | `1.0` | Horizontal scaling |
+| `scale-y` | `number` | `1.0` | Vertical scaling |
+| `rotation` | `number` | `0.0` | Rotation (radians) |
+| `pivot` | `number` | `0.5` | Horizontal and vertical pivot position |
+| `pivot-x` | `number` | `0.5` | Horizontal pivot position (0 = left, 0.5 = center, 1 = right) |
+| `pivot-y` | `number` | `0.5` | Vertical pivot position (0 = top, 0.5 = center, 1 = bottom) |
 
 ## Textures
 All visible tags (`picture`, `rectangle`, `text`, etc.) internally render a texture. You can control several aspects of
@@ -379,17 +384,17 @@ implement linear gradients.
 
 | Property | Type | Default | Notes |
 | -------- | ---- | ------- | ------ |
-| `alpha` | number | 0.0 | Opacity, between 0.0 and 1.0 |
-| `visible` | boolean | true | Visibility. When set to false, has same effect as `display:none` in CSS |
-| `color` | number or string | 0xffffffff | Color |
-| `color-left` | number or string | 0xffffffff | Left-side color |
-| `color-right` | number or string | 0xffffffff | Right-side color |
-| `color-top` | number or string | 0xffffffff | Top-side color |
-| `color-bottom` | number or string | 0xffffffff | Bottom-side color |
-| `color-top-left` | number or string | 0xffffffff | Top-left corner color |
-| `color-top-right` | number or string | 0xffffffff | Top-right corner color |
-| `color-bottom-left` | number or string | 0xffffffff | Bottom-left corner color |
-| `color-bottom-right` | number or string | 0xffffffff | Bottom-right corner color |
+| `alpha` | `number` | 0.0 | Opacity, between 0.0 and 1.0 |
+| `visible` | `boolean` | true | Visibility. When set to false, has same effect as `display:none` in CSS |
+| `color` | `number` or `string` | `0xffffffff` | Color |
+| `color-left` | `number` or `string` | `0xffffffff` | Left-side color |
+| `color-right` | `number` or `string` | `0xffffffff` | Right-side color |
+| `color-top` | `number` or `string` | `0xffffffff` | Top-side color |
+| `color-bottom` | `number` or `string` | `0xffffffff` | Bottom-side color |
+| `color-top-left` | `number` or `string` | `0xffffffff` | Top-left corner color |
+| `color-top-right` | `number` or `string` | `0xffffffff` | Top-right corner color |
+| `color-bottom-left` | `number` or `string` | `0xffffffff` | Bottom-left corner color |
+| `color-bottom-right` | `number` or `string` | `0xffffffff` | Bottom-right corner color |
 
 ::: tip Note
 The supported color formats are [CSS colors](https://github.com/Planning-nl/tree2d/blob/master/src/tree/ColorUtils.ts#L185), RGB(A), Hex and hexadecimal ARGB.
@@ -397,8 +402,8 @@ Using hexadecimal ARGB will be the fastest, as it won't require a conversion.
 :::
 
 ### Texture clipping
-Textures can be clipped. This means that, instead of the full texture, only a part of it is used and rendered. This can
-give you a high-performance way of custom clipping, and allows you to implement a way of using spritemaps, for example.
+Textures can be clipped. This means that, instead of the full texture, only a part of it is used and rendered. This 
+allows you to implement a way of using spritemaps, for example.
 
 | Property | Type | Default | Notes |
 | -------- | ---- | ------- | ------ |
@@ -410,8 +415,7 @@ give you a high-performance way of custom clipping, and allows you to implement 
 
 > Notice that if the clipping region expands the actual texture source's bounds, they are capped on those bounds.
 
-> Clipping coordinates are `pixel-ratio` dependent. This means that you must divide the clipping region values by the 
-> pixel-ratio to get the same texture clipping area.
+> Clipping coordinates are `pixel-ratio` dependent.
 
 ## Clipping
 The `clipping` property results in the same effect as `overflow:hidden` in CSS. 
@@ -423,7 +427,7 @@ The `clipping` property results in the same effect as `overflow:hidden` in CSS.
 
 ## Z-Index
 Defines the stacking order of elements, behaves exactly like its' CSS counterpart. You can use the `z-index` property, 
-which takes a (floating point) number, to define a z-index. Notice that a negative number can also be used, and defines
+which takes a (floating point) number, to define a z-index. Notice that it is also possible to set a negative number, which means
 that the texture should be 'behind' the z-index context root's texture (if it has one). 
 
 In CSS there are several rules for when a **z-index context** is created. In Vugel, a node is a z-index context if (and 
@@ -437,8 +441,8 @@ There are a couple of Node lifecycle-related methods available.
 
 Example usage: `<container @attach="doSomething">...</container>`.
 
-| Name | Description |
-| ---- | ----------- |
+| Name | Event argument | Description |
+| ---- | -------------- | ----------- |
 | attach | `{ node: Node; stage: Stage }` | Node becomes attached to the render tree |
 | setup | `{ node: Node; stage: Stage }` | Node becomes attached to the render tree for the first time | 
 | detach | `{ node: Node; stage: Stage }` | Node becomes (no longer attached from the render tree) |
@@ -451,12 +455,12 @@ Example usage: `<container @attach="doSomething">...</container>`.
 | texture-unloaded | `{ node: Node; stage: Stage; texture: Texture }` | Texture of this node was unloaded (garbage collected) |
 
 > Visible bounds uses the viewport size and clipping to determine which elements are (partly) on screen. An additional 
-> visible bounds margin can be set using the `bounds-margin` property. 
+> *visible bounds margin* can be set using the `bounds-margin` property. 
 
 ## UI Events
-UI Events supported by Vugel are kept similar to DOM UI events.
+Vugel attempts to offer UI Events that are similar to DOM UI events.
 
-There are some differences.
+However, there are some differences.
 
 Every event has a different type than the original event. It was chosen to do it this way as to be able to ensure that 
 the expected behavior is actually followed.
@@ -468,7 +472,9 @@ A `VugelEvent` has the following properties:
 - `target: Node | null`: The event target node (while bubbeling).
 - `type: string`: The event name
 - `originalEvent: Event`: The original DOM Event is available using the `originalEvent` property.
- 
+
+> In HTML you can invoke `event.preventDefault()` to disable the default event. The same can be done in Vugel using `event.originalEvent.preventDefault()`.
+
 ### Mouse events
 All mouse events supported by DOM are supported by Vugel, and are translated into their own structure.
 
@@ -489,6 +495,10 @@ Touch events are not supported in the regular sense. Instead, we provide basic t
 touch and translating it to the corresponding mouse event. 
 
 ### Focus events
+Vugel allows one node to be the *focused* node. The focused node, like in HTML, reveices keypresses.
+You may set the focus by obtaining a reference to the node (using template refs) and invoking the `focus()` method:
+`myRef.value.focus()` 
+
 Supported events:
 - `focusin`
 - `focusout`
@@ -499,7 +509,10 @@ Additional event fields:
 - `relatedTarget: Node | null`: The previous (in case of `focusin`, `focus` events) or new (`focusout`, `blur`) focused node.
 
 ### Keyboard events
+
 Supported events:
 - `keypress`
 - `keydown`
 - `keyup`
+
+You can find the key-related details in the `originalEvent`.
