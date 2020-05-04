@@ -85,11 +85,6 @@ The available Vugel `:settings` are used for creating a new tree2d stage. They d
 canvas. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
 for a full list of options.
 
-::: tip Note
-The supported color formats are [CSS colors](https://github.com/Planning-nl/tree2d/blob/master/src/tree/ColorUtils.ts#L185), RGB(A), Hex and hexadecimal ARGB.
-Using hexadecimal ARGB will be the fastest, as it won't require a conversion.
-:::
-
 #### Vugel components
 
 To use custom SFC components which are fully rendered using Vugel, it is required to annotate those components with the
@@ -196,7 +191,8 @@ The `onDraw` function will be invoked automatically when the element dimensions 
 
 ### [`texture`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Texture.ts)
 There are advanced use cases where the `drawing` tag is not flexible enough. For example if you'd want to upload an 
-UInt8Array as a WebGL texture source. The `texture` tag allows you to use a [tree2d native texture](https://github.com/Planning-nl/tree2d/tree/master/src/textures) directly. 
+UInt8Array as a WebGL texture source. The `texture` tag allows you to use a 
+[tree2d native texture](https://github.com/Planning-nl/tree2d/tree/master/src/textures) directly. 
 
 ### [`svg`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/textures/Svg.ts)
 Renders an svg file (set by the `src` property) for the available width and height.
@@ -221,6 +217,15 @@ An intermediate texture is used, so you should make sure that the element has wi
 
 ### [`box-blur`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/effects/BoxBlur.ts)
 The contents of this element are rendered box-blurred. Box blur is a very slight but high-performance blur effect.
+
+### [`direct-container`](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/DirectContainer.ts)
+In very specific cases you may wish to work around Vue templates/reactivity. Vue is great in almost all use cases, but 
+direct mutations can be faster and give you more fine-grained control.
+
+The direct container, in contrast to a normal container, allows you to add, remove and iterate over children directly
+via several child-related methods. 
+
+> In a vue template, the direct-container should not contain children.
 
 ## Layout
 Vugel offers a layout engine that uses relative positioning. Additionally, it contains a flexbox layout engine.
@@ -286,7 +291,7 @@ These Node methods can be used to obtain information on the Node's dynamic layou
 
 | Event | arg | Description |
 | ------ | --- | ----------- |
-| `onResize` | `{ node: Node; stage: Stage; w: number; h: number }` | Called whenever the node changes dimensions dynamically |
+| `resize` | `{ node: Node; stage: Stage; w: number; h: number }` | Called whenever the node changes dimensions dynamically |
 
 ## Flexbox
 
@@ -303,7 +308,7 @@ properties.
 
 These properties define the behavior of a flex container.
 
-| Property | type | CSS equivalent | Notes |
+| Property | Type | CSS equivalent | Notes |
 | -------- | ---- | -------------- |-----|
 | `flex` | `true,false` | | When true, this node behaves as a flex container  |
 | `flex-direction`| `'row','row-reverse','column','column-reverse'` | `flex-direction` | |
@@ -321,7 +326,7 @@ These properties define the behavior of a flex container.
 
 These properties define the behavior of the child items of a flex container.
 
-| Property | type | CSS equivalent | Notes |
+| Property | Type | CSS equivalent | Notes |
 | -------- | ---- | -------------- |----|
 | `flex-item` | `true,false` | | When false, this item will not affect the flex layout and will be positioned relatively |
 | `flex-grow`| `number` | `flex-grow` | |
@@ -351,13 +356,102 @@ It also affects relative layout function arguments (`w` or `h`). If the parent h
 grandparent's width and height will be used.
 
 ## Transforms
-TODO: scaling, rotation, pivot.
 
-## Rendering
-TODO: clipping, renderToTexture, z-index, texture clipping / resize modes
+All Vugel nodes support a couple of linear transformations, available using a couple of properties:
 
-## Lifecycle
-TODO: lifecycle events (onSetup etc)
+| Property | Type | Default | Notes |
+| -------- | ---- | ------- | ------ |
+| `scale` | number | 1.0 | Horizontal and vertical scaling |
+| `scale-x` | number | 1.0 | Horizontal scaling |
+| `scale-y` | number | 1.0 | Vertical scaling |
+| `rotation` | number | 0.0 | Rotation (radians) |
+| `pivot` | number | 0.5 | Horizontal and vertical pivot position |
+| `pivot-x` | number | 0.5 | Horizontal pivot position (0 = left, 0.5 = center, 1 = right) |
+| `pivot-y` | number | 0.5 | Vertical pivot position (0 = top, 0.5 = center, 1 = bottom) |
+
+## Textures
+All visible tags (`picture`, `rectangle`, `text`, etc.) internally render a texture. You can control several aspects of
+these textures and how they are being rendered.
+
+### Visibility & tinting
+All textures can be tinted to a specific color. Different corner points or sides can receive different colors to 
+implement linear gradients.
+
+| Property | Type | Default | Notes |
+| -------- | ---- | ------- | ------ |
+| `alpha` | number | 0.0 | Opacity, between 0.0 and 1.0 |
+| `visible` | boolean | true | Visibility. When set to false, has same effect as `display:none` in CSS |
+| `color` | number or string | 0xffffffff | Color |
+| `color-left` | number or string | 0xffffffff | Left-side color |
+| `color-right` | number or string | 0xffffffff | Right-side color |
+| `color-top` | number or string | 0xffffffff | Top-side color |
+| `color-bottom` | number or string | 0xffffffff | Bottom-side color |
+| `color-top-left` | number or string | 0xffffffff | Top-left corner color |
+| `color-top-right` | number or string | 0xffffffff | Top-right corner color |
+| `color-bottom-left` | number or string | 0xffffffff | Bottom-left corner color |
+| `color-bottom-right` | number or string | 0xffffffff | Bottom-right corner color |
+
+::: tip Note
+The supported color formats are [CSS colors](https://github.com/Planning-nl/tree2d/blob/master/src/tree/ColorUtils.ts#L185), RGB(A), Hex and hexadecimal ARGB.
+Using hexadecimal ARGB will be the fastest, as it won't require a conversion.
+:::
+
+### Texture clipping
+Textures can be clipped. This means that, instead of the full texture, only a part of it is used and rendered. This can
+give you a high-performance way of custom clipping, and allows you to implement a way of using spritemaps, for example.
+
+| Property | Type | Default | Notes |
+| -------- | ---- | ------- | ------ |
+| `clip-x` | number | 0 | Horizontal clipping position (in pixels) |
+| `clip-y` | number | 0 | Vertical clipping position (in pixels) |
+| `clip-w` | number | 0 | Horizontal clipping size (in pixels) |
+| `clip-h` | number | 0 | Vertical clipping size (in pixels) |
+| `pixel-ratio` | number | 1 | The pixel ratio of the texture. This 'scales' the texture. |
+
+> Notice that if the clipping region expands the actual texture source's bounds, they are capped on those bounds.
+
+> Clipping coordinates are `pixel-ratio` dependent. This means that you must divide the clipping region values by the 
+> pixel-ratio to get the same texture clipping area.
+
+## Clipping
+The `clipping` property results in the same effect as `overflow:hidden` in CSS. 
+
+> In Vugel, clipping is implemented using the WebGL `scissor()` operation. It is incredibly fast, but it doesn't support
+> non-rectangular shapes. This means that the `clipping` property won't work when the Vugel node (or one of its ancestors) 
+> is rotated. In this case `render-to-texture` can be used, which doesn't have this limitation. It achieves clipping by 
+> rendering the node to a separate texture and that makes it a bit slower.
+
+## Z-Index
+Defines the stacking order of elements, behaves exactly like its' CSS counterpart. You can use the `z-index` property, 
+which takes a (floating point) number, to define a z-index. Notice that a negative number can also be used, and defines
+that the texture should be 'behind' the z-index context root's texture (if it has one). 
+
+In CSS there are several rules for when a **z-index context** is created. In Vugel, a node is a z-index context if (and 
+only if):
+* non-zero `z-index` is specified
+* `force-z-index-context` is set to `true`
+* `render-to-texture` is enabled
+
+## Lifecycle Events
+There are a couple of Node lifecycle-related methods available.
+
+Example usage: `<container @attach="doSomething">...</container>`.
+
+| Name | Description |
+| ---- | ----------- |
+| attach | `{ node: Node; stage: Stage }` | Node becomes attached to the render tree |
+| setup | `{ node: Node; stage: Stage }` | Node becomes attached to the render tree for the first time | 
+| detach | `{ node: Node; stage: Stage }` | Node becomes (no longer attached from the render tree) |
+| enabled | `{ node: Node; stage: Stage }` | Node becomes (attached and visible) |
+| disabled | `{ node: Node; stage: Stage }` | Node is no longer (attached and visible) |
+| active | `{ node: Node; stage: Stage }` | Node becomes (attached and visible and within *visible bounds*) |
+| inactive | `{ node: Node; stage: Stage }` | Node is no longer (attached and visible and within *visible bounds*) |
+| texture-error | `{ node: Node; stage: Stage; texture: Texture; error: Error }` | An error occurred while loading the texture of this node |
+| texture-loaded | `{ node: Node; stage: Stage; texture: Texture }` | Texture of this node was loaded |
+| texture-unloaded | `{ node: Node; stage: Stage; texture: Texture }` | Texture of this node was unloaded (garbage collected) |
+
+> Visible bounds uses the viewport size and clipping to determine which elements are (partly) on screen. An additional 
+> visible bounds margin can be set using the `bounds-margin` property. 
 
 ## UI Events
 UI Events supported by Vugel are kept similar to DOM UI events.
