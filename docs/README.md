@@ -384,8 +384,8 @@ implement linear gradients.
 
 | Property | Type | Default | Notes |
 | -------- | ---- | ------- | ------ |
-| `alpha` | `number` | 0.0 | Opacity, between 0.0 and 1.0 |
-| `visible` | `boolean` | true | Visibility. When set to false, has same effect as `display:none` in CSS |
+| `alpha` | `number` | `0.0` | Opacity, between 0.0 and 1.0 |
+| `visible` | `boolean` | `true` | Visibility. When set to false, has same effect as `display:none` in CSS |
 | `color` | `number` or `string` | `0xffffffff` | Color |
 | `color-left` | `number` or `string` | `0xffffffff` | Left-side color |
 | `color-right` | `number` or `string` | `0xffffffff` | Right-side color |
@@ -407,11 +407,11 @@ allows you to implement a way of using spritemaps, for example.
 
 | Property | Type | Default | Notes |
 | -------- | ---- | ------- | ------ |
-| `clip-x` | number | 0 | Horizontal clipping position (in pixels) |
-| `clip-y` | number | 0 | Vertical clipping position (in pixels) |
-| `clip-w` | number | 0 | Horizontal clipping size (in pixels) |
-| `clip-h` | number | 0 | Vertical clipping size (in pixels) |
-| `pixel-ratio` | number | 1 | The pixel ratio of the texture. This 'scales' the texture. |
+| `clip-x` | `number` | `0.0` | Horizontal clipping position (in pixels) |
+| `clip-y` | `number` | `0.0` | Vertical clipping position (in pixels) |
+| `clip-w` | `number` | `0.0` | Horizontal clipping size (in pixels); when set to `0`, the texture width is used |
+| `clip-h` | `number` | `0.0` | Vertical clipping size (in pixels); when set to `0`, the texture height is used |
+| `pixel-ratio` | `number` | `1.0` | The pixel ratio of the texture. This 'scales' the texture. |
 
 > Notice that if the clipping region expands the actual texture source's bounds, they are capped on those bounds.
 
