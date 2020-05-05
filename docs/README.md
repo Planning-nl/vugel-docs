@@ -84,6 +84,12 @@ You should only specify your root component(s) (without using `v-if`) in the `<v
 in pure Vugel components, because the Vue3 compiler currently doesn't support mixing HTML and Vugel tags within the same template.
 :::
 
+::: warning
+The vugel tag creates a `HTMLCanvasElement` wrapped by a `HTMLDivElement`. All styles are applied to this wrapper element.
+The wrapper element needs to detect the width and height of the canvas automatically. For this purpose it specifies a
+single inline style rule: `position:relative`. This can potentially interfere with your own stylesheets.
+:::
+
 The available Vugel `:settings` are used for creating a new tree2d stage. They define, for example, the background of the 
 canvas and memory settings. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
 for a full list of options.
