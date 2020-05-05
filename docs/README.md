@@ -91,8 +91,21 @@ single inline style rule: `position:relative`. This can potentially interfere wi
 :::
 
 The available Vugel `:settings` are used for creating a new tree2d stage. They define, for example, the background of the 
-canvas and memory settings. See [StageOptions.ts](https://github.com/Planning-nl/tree2d/blob/master/src/tree/StageOptions.ts) 
-for a full list of options.
+canvas and memory settings. 
+
+## Vugel Settings
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| eventsTarget | HTMLElement | Target to bind event listeners to. Defaults to the canvas element |
+| clearColor | `number` or `string` or `null` | Background color |
+| gpuPixelsMemory | number | When this amount of pixels is reached, no longer used textures are cleaned up |
+| bufferMemory | number | Defines the amount of items that can be drawn on a single frame |
+| defaultFontFace | string[] | The default font face (+ fallbacks) to use |
+| useImageWorker | boolean | Use off-threaded image parsing (default is `true`) |
+| autostart | boolean | When set to `false`, you must manually invoke `stage.drawFrame()` to re-render |
+| pixelRatio | number | The pixelRatio to use. It is advisable to use 1, 1.5 or 2.0 to avoid artifacts |
+| canvas2d | boolean | Enables canvas2d mode rendering, even when WebGL is available |
 
 #### Vugel components
 
