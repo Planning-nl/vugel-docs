@@ -97,15 +97,15 @@ canvas and memory settings.
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| eventsTarget | HTMLElement | Target to bind event listeners to. Defaults to the canvas element |
+| eventsTarget | `HTMLElement` | Target to bind event listeners to. Defaults to the canvas element |
 | clearColor | `number` or `string` or `null` | Background color |
-| gpuPixelsMemory | number | When this amount of pixels is reached, no longer used textures are cleaned up |
-| bufferMemory | number | Defines the amount of items that can be drawn on a single frame |
-| defaultFontFace | string[] | The default font face (+ fallbacks) to use |
-| useImageWorker | boolean | Use off-threaded image parsing (default is `true`) |
-| autostart | boolean | When set to `false`, you must manually invoke `stage.drawFrame()` to re-render |
-| pixelRatio | number | The pixelRatio to use. It is advisable to use 1, 1.5 or 2.0 to avoid artifacts |
-| canvas2d | boolean | Enables canvas2d mode rendering, even when WebGL is available |
+| gpuPixelsMemory | `number` | When this amount of pixels is reached, no longer used textures are cleaned up |
+| bufferMemory | `number` | Defines the amount of items that can be drawn on a single frame |
+| defaultFontFace | `string[]` | The default font face (+ fallbacks) to use |
+| useImageWorker | `boolean` | Use off-threaded image parsing (default is `true`) |
+| autostart | `boolean` | When set to `false`, you must manually invoke `stage.drawFrame()` to re-render |
+| pixelRatio | `number` | The pixelRatio to use. It is advisable to use 1, 1.5 or 2.0 to avoid artifacts |
+| canvas2d | `boolean` | Enables canvas2d mode rendering, even when WebGL is available |
 
 #### Vugel components
 
