@@ -509,6 +509,8 @@ Every mouse event will additionally include the following fields:
 - `elementOffsetX` / `elementOffsetY`: the offset of the mouse w.r.t. the current element
 - `currentElement: { offsetX: number; offsetY: number; element: Element; }`: The tree2d target and offset.
 
+> To get the relative offset to the event handling node use: `e.currentTarget!.getLocalOffset(e.canvasOffsetX, e.canvasOffsetY)`.
+
 ### Touch events
 Touch events are not supported in the regular sense. Instead, we provide basic touch support by converting the first 
 touch and translating it to the corresponding mouse event. 
