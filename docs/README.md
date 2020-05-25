@@ -244,9 +244,13 @@ In very specific cases you may wish to work around Vue templates/reactivity. Vue
 direct mutations can be faster and offers more fine-grained control.
 
 The direct container, in contrast to a normal container, allows you to add, remove and iterate over children directly
-via several child-related methods. 
+via several child-related methods. You can use the `create(type: Constructor<Node>)` method to create nodes that can be 
+added to this direct container. These nodes are direct-containers themselves, allowing you to add children to them as
+well.
 
-> In a vue template, the `direct-container` tag should not contain children.
+For a list of child-mutating methods, see [https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/direct.ts#L11](https://github.com/Planning-nl/vugel/blob/master/src/runtime/nodes/direct.ts#L11).
+
+> The `direct-container` tag should not contain children in a vue template.
 
 ## Layout
 Vugel offers basic layouting that uses relative positioning. Additionally, it contains a flexbox layout engine which
