@@ -459,6 +459,9 @@ only if):
 * `force-z-index-context` is set to `true`
 * `render-to-texture` is enabled
 
+## Cursor Type
+The cursor that's shown in the browser when the mouse hovers a node can be controlled using the `cursor-type` property. It takes a string in the same format as the CSS [https://developer.mozilla.org/en-US/docs/Web/CSS/cursor](`cursor`) property.
+
 ## Lifecycle Events
 There are a couple of Node lifecycle-related methods available.
 
